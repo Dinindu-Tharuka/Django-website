@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
+from rest_framework.decorators import action
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin,UpdateModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
-from .models import Collection, Product, OrderItem, Review, Cart, CartItem
-from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, SimpleCartItemSerializer
+from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer
+from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, SimpleCartItemSerializer, CustomerSerializer
 from .pagination import DefaultPagination
 
 
@@ -65,3 +66,21 @@ class CartItemViewSet(ModelViewSet):
         return {
             'cart_id': self.kwargs['cart_pk']
         }
+
+
+class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
+    queryset= Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+    @action(detail=False, methods=['GET', 'PUT'])
+    def me(self, request):
+        customer = Customer.objects.get(user_id=request.user.id)
+        if request.method == 'GET':
+            serializer = CustomerSerializer(customer)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer = CustomerSerializer(customer, request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
