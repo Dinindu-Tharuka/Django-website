@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin,UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
 from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer
@@ -23,6 +24,9 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
+    permission_classes = [IsAuthenticated]
+
+    
 
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(product_id=kwargs['pk']).count() > 0:
@@ -53,6 +57,7 @@ class CartItemViewSet(ModelViewSet):
 
     http_method_names = ['get', 'patch', 'delete', 'post']
 
+
     def get_serializer_class(self):
         if self.request.method == 'POST' or self.request.method == 'PATCH':
             return SimpleCartItemSerializer
@@ -68,13 +73,20 @@ class CartItemViewSet(ModelViewSet):
         }
 
 
-class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
-    queryset= Customer.objects.all()
+class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
+    queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        else:
+            return [IsAuthenticated()]
 
     @action(detail=False, methods=['GET', 'PUT'])
     def me(self, request):
-        customer = Customer.objects.get(user_id=request.user.id)
+        customer, isAvailable = Customer.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
             serializer = CustomerSerializer(customer)
             return Response(serializer.data)
@@ -83,4 +95,3 @@ class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
-
