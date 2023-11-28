@@ -2,17 +2,19 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
-from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer
-from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, SimpleCartItemSerializer, CustomerSerializer
+from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer, Order
+from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, SimpleCartItemSerializer, CustomerSerializer, OrderSerializer
 from .pagination import DefaultPagination
+from.permission import IsAdminOrReadOnly
 
 
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     def destroy(self, request, *args, **kwargs):
         if Product.objects.filter(collection_id=kwargs['pk']).count() > 0:
@@ -24,7 +26,7 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
     
 
@@ -35,8 +37,8 @@ class ProductViewSet(ModelViewSet):
 
 
 class ReviewViewSet(ModelViewSet):
-
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Review.objects.filter(product_id=self.kwargs['product_pk'])
@@ -73,18 +75,13 @@ class CartItemViewSet(ModelViewSet):
         }
 
 
-class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin):
+class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    
+    permission_classes = [IsAdminUser]
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [AllowAny()]
-        else:
-            return [IsAuthenticated()]
-
-    @action(detail=False, methods=['GET', 'PUT'])
+   
+    @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
     def me(self, request):
         customer, isAvailable = Customer.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
@@ -95,3 +92,7 @@ class CustomerViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin, Upda
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
+        
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer

@@ -1,0 +1,13 @@
+env
+
+store/migrations/*
+!store/migrations/__init__.py
+
+like/migrations/*
+!like/migrations/__init__.py
+
+core/migrations/*
+!core/migrations/__init__.py
+
+tag/migrations/*
+!tag/migrations/__init__.py

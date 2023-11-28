@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Collection, Product, Review, Cart, CartItem, Customer
+from .models import Collection, Product, Review, Cart, CartItem, Customer, Order, OrderItem
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -35,7 +35,6 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'quantity', 'total']
-
     
 
     total = serializers.SerializerMethodField(method_name='calculate_total')
@@ -99,3 +98,13 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['id', 'user_id', 'phone', 'membership']
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Order
+        fields = ['id', 'customer', 'palce_at', 'payment_status']
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= OrderItem
+        fields = ['id', 'quantity', 'unit_price', 'order_id', 'product']
