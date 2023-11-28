@@ -16,9 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-
     product_id = serializers.IntegerField(read_only=True)
-
     class Meta:
         model = Review
         fields = ['id', 'product_id', 'name', 'description']
@@ -29,9 +27,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-
     product = ProductSerializer()
-
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'quantity', 'total']
@@ -46,7 +42,6 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class SimpleCartItemSerializer(serializers.ModelSerializer):
-
     product_id = serializers.IntegerField()
 
     class Meta:

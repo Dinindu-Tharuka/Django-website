@@ -38,7 +38,6 @@ class ProductViewSet(ModelViewSet):
 
 class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Review.objects.filter(product_id=self.kwargs['product_pk'])
@@ -56,9 +55,7 @@ class CartViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
 
 
 class CartItemViewSet(ModelViewSet):
-
     http_method_names = ['get', 'patch', 'delete', 'post']
-
 
     def get_serializer_class(self):
         if self.request.method == 'POST' or self.request.method == 'PATCH':
