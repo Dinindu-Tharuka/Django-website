@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
@@ -46,8 +46,8 @@ class ReviewViewSet(ModelViewSet):
         }
 
 
-class CartViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
-    queryset = Cart.objects.all()
+class CartViewSet(GenericViewSet, CreateModelMixin, RetrieveModelMixin, DestroyModelMixin):
+    queryset = Cart.objects.prefetch_related('cartitem__product').all()
     serializer_class = CartSerializer
 
 
@@ -60,7 +60,7 @@ class CartItemViewSet(ModelViewSet):
         return CartItemSerializer
 
     def get_queryset(self):
-        queryset = CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
+        queryset = CartItem.objects.filter(cart_id=self.kwargs['cart_pk']).select_related('product')
         return queryset
 
     def get_serializer_context(self):

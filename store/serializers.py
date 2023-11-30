@@ -75,7 +75,7 @@ class SimpleCartItemSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
 
-    cartitem = CartItemSerializer(many=True)
+    cartitem = CartItemSerializer(many=True, read_only=True)
     id = serializers.UUIDField(read_only=True)
 
     class Meta:
