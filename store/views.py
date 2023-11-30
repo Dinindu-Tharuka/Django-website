@@ -21,14 +21,11 @@ class CollectionViewSet(ModelViewSet):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
 
-
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = DefaultPagination
-    permission_classes = [IsAdminOrReadOnly]
-
-    
+    permission_classes = [IsAdminOrReadOnly]    
 
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(product_id=kwargs['pk']).count() > 0:
