@@ -11,3 +11,5 @@ core/migrations/*
 
 tag/migrations/*
 !tag/migrations/__init__.py
+
+media/
