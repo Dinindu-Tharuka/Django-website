@@ -5,9 +5,9 @@ from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateMo
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.response import Response
-from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer, Order
+from .models import Collection, Product, OrderItem, Review, Cart, CartItem, Customer, Order, ProductImages
 from .serializers import CollectionSerializer, ProductSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, SimpleCartItemSerializer, CustomerSerializer, OrderSerializer
-from .serializers import OrderCreateSerializer, UpdateOrderSerializer
+from .serializers import OrderCreateSerializer, UpdateOrderSerializer, ProductImageSerilaizer
 from .pagination import DefaultPagination
 from .permission import IsAdminOrReadOnly
 
@@ -33,6 +33,17 @@ class ProductViewSet(ModelViewSet):
         if OrderItem.objects.filter(product_id=kwargs['pk']).count() > 0:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
+    
+class ProductImageViewSet(ModelViewSet):
+    serializer_class = ProductImageSerilaizer
+
+    def get_queryset(self):
+        return ProductImages.objects.filter(product_id=self.kwargs['product_pk'])
+    
+    def get_serializer_context(self):
+        return {
+            'product_id':self.kwargs['product_pk']
+        }
 
 
 class ReviewViewSet(ModelViewSet):

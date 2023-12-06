@@ -1,18 +1,27 @@
 from rest_framework import serializers
-from .models import Collection, Product, Review, Cart, CartItem, Customer, Order, OrderItem
+from .models import Collection, Product, Review, Cart, CartItem, Customer, Order, OrderItem, ProductImages
 from django.db import transaction
 
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
         fields = ['id', 'title']
+class ProductImageSerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImages
+        fields = ['id', 'image']
 
+    def create(self, validated_data):
+        insatance = ProductImages.objects.create(product_id=self.context['product_id'], **validated_data)
+        return insatance
 
 class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerilaizer(many=True, read_only=True)
     class Meta:
         model = Product
         fields = ['id', 'title', 'slug', 'description',
-                  'unit_price', 'last_update', 'collection', 'promotion']
+                  'unit_price', 'last_update', 'collection', 'promotion', 'images']
+
 
 
 class ReviewSerializer(serializers.ModelSerializer):
