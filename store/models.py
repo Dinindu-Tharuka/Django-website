@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from .validators import validate_file_size
 from uuid import uuid4
 
 
@@ -38,7 +39,7 @@ class Product(models.Model):
     
 class ProductImages(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products')
+    image = models.ImageField(upload_to='products', validators=[validate_file_size])
 
 
 class Customer(models.Model):
