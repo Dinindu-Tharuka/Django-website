@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Collection, Product, Customer, ProductImages
+from .models import Collection, Product, Customer, ProductImages, Promotion
 from django.utils.html import format_html
 
 
@@ -36,3 +36,7 @@ class CustomerAdmin(admin.ModelAdmin):
     
     def last_name(self, customer):
         return customer.user.last_name
+    
+@admin.register(Promotion)
+class PromotionAdmin(admin.ModelAdmin):
+    pass

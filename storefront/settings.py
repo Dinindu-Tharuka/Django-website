@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'djoser',
     'core',
     'store',
+    'playground',
     
 ]
 
@@ -157,3 +158,12 @@ SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
    "ACCESS_TOKEN_LIFETIME": timedelta(days=50)
 }
+
+########### Email
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 2525 ## normal smtp server runs 25
+DEFAULT_FROM_EMAIL = 'dinidutharuka@gmail.com'
