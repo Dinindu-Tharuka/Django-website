@@ -167,3 +167,6 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 2525 ## normal smtp server runs 25
 DEFAULT_FROM_EMAIL = 'dinidutharuka@gmail.com'
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
