@@ -2,14 +2,24 @@ env
 
 store/migrations/*
 !store/migrations/__init__.py
+store/__pycache__
+
+playground/migrations/*
+!playground/migrations/__init__.py
+playground/__pycache__
+
+storefront/__pycache__
 
 like/migrations/*
 !like/migrations/__init__.py
+like/__pycache__
 
 core/migrations/*
 !core/migrations/__init__.py
+core/__pycache__
 
 tag/migrations/*
 !tag/migrations/__init__.py
+tag/__pycache__
 
 media/
