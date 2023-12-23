@@ -174,4 +174,14 @@ EMAIL_PORT = 2525 ## normal smtp server runs 25
 DEFAULT_FROM_EMAIL = 'dinidutharuka@gmail.com'
 
 
+## scheduling
+from celery.schedules import crontab
+
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
+CELERY_BEAT_SCHEDULE = {
+    'notify_customers': {
+        'task': 'playground.tasks.notify_customer',
+        'schedule': 5,
+        'args':['Hello worlds']
+    }
+}
